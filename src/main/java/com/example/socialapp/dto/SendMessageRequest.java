@@ -10,5 +10,5 @@ import lombok.NoArgsConstructor;
 public class SendMessageRequest {
     private String content;
     private String senderId;
-    private String discussionId;
+    private String receiverId;
 }

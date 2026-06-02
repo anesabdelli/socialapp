@@ -7,12 +7,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-public class Message {
+@AllArgsConstructor
+public class Discussion {
     String id;
-    String content;
-    String senderId;
-    String discussionId;
-    LocalDateTime sentAt;
+    String user1Id;
+    String user2Id; 
+    LocalDateTime createdAt;
 }
