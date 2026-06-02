@@ -31,7 +31,7 @@ public class MessageController {
         messageService.sendMessage(
             request.getContent(),
             request.getSenderId(), 
-            request.getDiscussionId()
+            request.getReceiverId()
         );
 
         return ResponseEntity.status(201).build();
