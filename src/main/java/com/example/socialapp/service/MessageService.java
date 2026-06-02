@@ -1,6 +1,7 @@
 package com.example.socialapp.service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 import com.example.socialapp.model.Message;
@@ -18,5 +19,9 @@ public class MessageService {
         LocalDateTime sentAt = LocalDateTime.now();
         Message message = new Message(id, content, senderId, discussionId, sentAt);
         messageRepository.save(message);
+    }
+
+    public List<Message> getMessagesByDiscussion(String discussionId){
+        return messageRepository.findByDiscussionId(discussionId);
     }
 }
