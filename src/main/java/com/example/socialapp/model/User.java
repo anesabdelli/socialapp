@@ -8,12 +8,12 @@ import java.util.UUID;
 @Setter
 @Getter
 
-public class UserModel {
+public class User{
     private UUID id;
     private String username;
 
-    public UserModel(UUID id, String username) {
-        this.id = UUID.randomUUID();
+    public User(UUID id, String username) {
+        this.id = id;
         this.username = username;
     }
 }

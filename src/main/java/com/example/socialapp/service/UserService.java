@@ -1,7 +1,7 @@
 package com.example.socialapp.service;
 //sse = server sent event
 
-import com.example.socialapp.model.UserModel;
+import com.example.socialapp.model.User;
 import com.example.socialapp.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
@@ -16,12 +16,12 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public UserModel createUser(String username) {
+    public User createUser(String username) {
         UUID uuid = UUID.randomUUID();
-        return userRepository.saveUser(new UserModel(uuid, username));
+        return userRepository.saveUser(new User(uuid, username));
     }
 
-    public Optional<UserModel> getUserById(UUID id) {
+    public Optional<User> getUserById(UUID id) {
         return userRepository.findUserById(id);
 
     }
