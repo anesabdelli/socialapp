@@ -26,6 +26,9 @@ public class Message {
     @JoinColumn(name = "sender_id")
     private User sender;
 
+    private byte[] fileData;
+    private String fileName;
+
     private String discussionId;
 
     private LocalDateTime sentAt;
