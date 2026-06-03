@@ -1,16 +1,17 @@
-package com.example.socialapp.repository.impl;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.springframework.stereotype.Component;
+package com.example.socialapp.repository.impl.inmemory;
 
 import com.example.socialapp.model.Message;
 import com.example.socialapp.repository.MessageRepository;
+import org.springframework.context.annotation.Profile;
+import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Component
+@Profile("inmemory")
 public class InMemoryMessageRepository implements MessageRepository {
     private final List<Message> messages = new ArrayList<>();
 
@@ -37,5 +38,4 @@ public class InMemoryMessageRepository implements MessageRepository {
     public void deleteById(String id) {
         messages.removeIf(m -> m.getId().equals(id));
     }
-
 }

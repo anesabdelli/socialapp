@@ -1,17 +1,18 @@
-package com.example.socialapp.repository.impl;
+package com.example.socialapp.repository.impl.inmemory;
+
+import com.example.socialapp.model.Discussion;
+import com.example.socialapp.model.User;
+import com.example.socialapp.repository.DiscussionRepository;
+import org.springframework.context.annotation.Profile;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.springframework.stereotype.Component;
-
-import com.example.socialapp.model.Discussion;
-import com.example.socialapp.model.User;
-import com.example.socialapp.repository.DiscussionRepository;
-
 @Component
+@Profile("inmemory")
 public class InMemoryDiscussionRepository implements DiscussionRepository {
     private final List<Discussion> discussions = new ArrayList<>();
 
