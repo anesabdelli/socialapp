@@ -33,4 +33,11 @@ public class InMemoryDiscussionRepository implements DiscussionRepository {
             .filter(d -> d.getUser1().getId().equals(user1.getId()) && d.getUser2().getId().equals(user2.getId()))
             .findFirst();
     }
+
+    @Override
+    public Optional<Discussion> findById(String id) {
+        return discussions.stream()
+            .filter(d -> d.getId().equals(id))
+            .findFirst();
+    }
 }
