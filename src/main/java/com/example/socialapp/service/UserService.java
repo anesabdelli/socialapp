@@ -17,11 +17,11 @@ public class UserService {
     }
 
     public User createUser(String username) {
-        UUID uuid = UUID.randomUUID();
+        String uuid = UUID.randomUUID().toString();
         return userRepository.saveUser(new User(uuid, username));
     }
 
-    public Optional<User> getUserById(UUID id) {
+    public Optional<User> getUserById(String id) {
         return userRepository.findUserById(id);
 
     }

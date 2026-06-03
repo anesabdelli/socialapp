@@ -9,10 +9,10 @@ import java.util.UUID;
 @Getter
 
 public class User{
-    private UUID id;
+    private String id;
     private String username;
 
-    public User(UUID id, String username) {
+    public User(String id, String username) {
         this.id = id;
         this.username = username;
     }

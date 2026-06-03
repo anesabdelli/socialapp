@@ -10,16 +10,16 @@ import java.util.UUID;
 
 @Repository
 public class InMemoryUserRepository implements UserRepository {
-    HashMap<UUID, User> users = new HashMap<>();
+    HashMap<String, User> users = new HashMap<>();
 
     @Override
-    public Optional<User> findUserById(UUID id) {
+    public Optional<User> findUserById(String id) {
         return Optional.ofNullable(users.get(id));
     }
 
     @Override
     public User saveUser(User user) {
-        users.put(user.getId(), user);
+        users.put((user.getId()), user);
         return user;
     }
 }
