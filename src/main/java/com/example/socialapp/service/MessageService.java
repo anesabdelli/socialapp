@@ -9,7 +9,9 @@ import com.example.socialapp.model.Discussion;
 import com.example.socialapp.model.Message;
 import com.example.socialapp.model.User;
 import com.example.socialapp.repository.MessageRepository;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class MessageService {
     private final MessageRepository messageRepository;
     private final DiscussionService discussionService;
@@ -30,6 +32,12 @@ public class MessageService {
         LocalDateTime sentAt = LocalDateTime.now();
         Message message = new Message(id, content, sender, discussion.getId(), sentAt);
         messageRepository.save(message);
+        log.info("Message sent | id={} | sender={} | discussion={} | sentAt={}",
+            message.getId(),
+            message.getSender().getId(),
+            message.getDiscussionId(),
+            message.getSentAt()
+        );
     }
 
     public List<Message> getMessagesByDiscussion(String discussionId){
