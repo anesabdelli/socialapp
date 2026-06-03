@@ -1,6 +1,6 @@
 package com.example.socialapp.controller;
 
-import com.example.socialapp.dto.CreateFriendRequestDto;
+import com.example.socialapp.dto.CreateFriendRequest;
 import com.example.socialapp.model.FriendRequest;
 import com.example.socialapp.service.FriendRequestService;
 import org.springframework.web.bind.annotation.*;
@@ -17,8 +17,8 @@ public class FriendRequestController {
     }
 
     @PostMapping
-    public FriendRequest createFriendRequest(@RequestBody CreateFriendRequestDto createFriendRequestDto) {
-        return friendRequestService.createFriendRequest(createFriendRequestDto.getReceiverId(), createFriendRequestDto.getSenderId());
+    public FriendRequest createFriendRequest(@RequestBody CreateFriendRequest createFriendRequest) {
+        return friendRequestService.createFriendRequest(createFriendRequest.getReceiverId(), createFriendRequest.getSenderId());
     }
 
     @GetMapping("/{receiverId}")
