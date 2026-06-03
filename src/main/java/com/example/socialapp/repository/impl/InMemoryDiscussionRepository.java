@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 
 import com.example.socialapp.model.Discussion;
+import com.example.socialapp.model.User;
 import com.example.socialapp.repository.DiscussionRepository;
 
 @Component
@@ -20,16 +21,16 @@ public class InMemoryDiscussionRepository implements DiscussionRepository {
     }
 
     @Override
-    public List<Discussion> findByUserId(String userId) {
+    public List<Discussion> findByUser(User user) {
         return discussions.stream()
-            .filter(d -> d.getUser1Id().equals(userId) || d.getUser2Id().equals(userId))
+            .filter(d -> d.getUser1().getId().equals(user.getId()) || d.getUser2().getId().equals(user.getId()))
             .collect(Collectors.toList());
     }
 
     @Override
-    public Optional<Discussion> findByUser1IdAndUser2Id(String user1Id, String user2Id) {
+    public Optional<Discussion> findByUsers(User user1, User user2) {
         return discussions.stream()
-            .filter(d -> d.getUser1Id().equals(user1Id) && d.getUser2Id().equals(user2Id))
+            .filter(d -> d.getUser1().getId().equals(user1.getId()) && d.getUser2().getId().equals(user2.getId()))
             .findFirst();
     }
 }
