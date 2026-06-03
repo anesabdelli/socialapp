@@ -7,24 +7,28 @@ import java.util.UUID;
 
 import com.example.socialapp.model.Discussion;
 import com.example.socialapp.model.Message;
+import com.example.socialapp.model.User;
 import com.example.socialapp.repository.MessageRepository;
 
 public class MessageService {
     private final MessageRepository messageRepository;
     private final DiscussionService discussionService;
+    private final UserService userService;
 
-    public MessageService(MessageRepository messageRepository, DiscussionService discussionService){
+    public MessageService(MessageRepository messageRepository, DiscussionService discussionService, UserService userService){
         this.messageRepository = messageRepository;
         this.discussionService = discussionService;
+        this.userService = userService;
     }
 
     public void sendMessage(String content, String senderId, String receiverId){
+        User sender = userService.getUserById(senderId).orElseThrow(() -> new RuntimeException("User not found: " + senderId));
 
         Discussion discussion = discussionService.getOrCreateDiscussion(senderId, receiverId);
 
         String id = UUID.randomUUID().toString();
         LocalDateTime sentAt = LocalDateTime.now();
-        Message message = new Message(id, content, senderId, discussion.getId(), sentAt);
+        Message message = new Message(id, content, sender, discussion.getId(), sentAt);
         messageRepository.save(message);
     }
 

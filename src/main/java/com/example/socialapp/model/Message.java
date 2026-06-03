@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 public class Message {
     private String id;
     private String content;
-    private String senderId;
+    private User sender;
     private String discussionId;
     private LocalDateTime sentAt;
 }

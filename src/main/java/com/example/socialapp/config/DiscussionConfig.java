@@ -5,12 +5,12 @@ import org.springframework.context.annotation.Configuration;
 
 import com.example.socialapp.repository.DiscussionRepository;
 import com.example.socialapp.service.DiscussionService;
+import com.example.socialapp.service.UserService;
 
 @Configuration
 public class DiscussionConfig {
     @Bean
-    public DiscussionService discussionService(DiscussionRepository discussionRepository){
-        return new DiscussionService(discussionRepository);
+    public DiscussionService discussionService(DiscussionRepository discussionRepository, UserService userService){
+        return new DiscussionService(discussionRepository, userService);
     }
-
 }

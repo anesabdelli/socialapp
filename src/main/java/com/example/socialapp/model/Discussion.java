@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Discussion {
     private String id;
-    private String user1Id;
-    private String user2Id; 
+    private User user1;
+    private User user2;
     private LocalDateTime createdAt;
 }
