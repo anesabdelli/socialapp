@@ -41,6 +41,7 @@ public class MessageService {
             message.getDiscussionId(),
             message.getSentAt()
         );
+        notificationService.notify(receiverId, "NEW_MESSAGE", message.getId(), discussion.getId());
     }
 
     public List<Message> getMessagesByDiscussion(String discussionId){
