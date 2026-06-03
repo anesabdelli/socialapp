@@ -1,13 +1,13 @@
 package com.example.socialapp.repository;
 
-import com.example.socialapp.model.UserModel;
+import com.example.socialapp.model.User;
 
 import java.util.Optional;
 import java.util.UUID;
 
 public interface UserRepository {
 
-    Optional<UserModel> findUserById(UUID id);
+    Optional<User> findUserById(String id);
 
-    UserModel saveUser(UserModel user);
+    User saveUser(User user);
 }
