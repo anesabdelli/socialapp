@@ -3,12 +3,10 @@ package com.example.socialapp.service;
 
 import com.example.socialapp.model.User;
 import com.example.socialapp.repository.UserRepository;
-import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 import java.util.UUID;
 
-@Service
 public class UserService {
     private final UserRepository userRepository;
 

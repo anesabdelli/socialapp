@@ -39,4 +39,8 @@ public class DiscussionService {
         User user = userService.getUserById(userId).orElseThrow(() -> new RuntimeException("User not found: " + userId));
         return discussionRepository.findByUser(user);
     }
+
+    public Optional<Discussion> findById(String id){
+        return discussionRepository.findById(id);
+    }
 }
