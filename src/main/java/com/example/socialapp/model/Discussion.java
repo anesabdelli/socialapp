@@ -10,8 +10,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Discussion {
-    String id;
-    String user1Id;
-    String user2Id; 
-    LocalDateTime createdAt;
+    private String id;
+    private String user1Id;
+    private String user2Id; 
+    private LocalDateTime createdAt;
 }

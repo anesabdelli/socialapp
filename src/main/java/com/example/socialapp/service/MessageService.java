@@ -2,6 +2,7 @@ package com.example.socialapp.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import com.example.socialapp.model.Discussion;
@@ -29,5 +30,16 @@ public class MessageService {
 
     public List<Message> getMessagesByDiscussion(String discussionId){
         return messageRepository.findByDiscussionId(discussionId);
+    }
+
+    public void editMessage(String id, String newContent) {
+        Optional<Message> existing = messageRepository.findById(id);
+        if(existing.isPresent()){
+            existing.get().setContent(newContent);
+        }
+    }
+
+    public void deleteMessage(String id){
+        messageRepository.deleteById(id);
     }
 }
