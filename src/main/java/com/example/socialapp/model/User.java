@@ -1,19 +1,13 @@
 package com.example.socialapp.model;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import java.util.UUID;
-
-@Setter
-@Getter
-
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class User{
     private String id;
     private String username;
-
-    public User(String id, String username) {
-        this.id = id;
-        this.username = username;
-    }
 }

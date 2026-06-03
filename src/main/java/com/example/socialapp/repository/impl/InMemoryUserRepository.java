@@ -6,7 +6,6 @@ import org.springframework.stereotype.Repository;
 
 import java.util.HashMap;
 import java.util.Optional;
-import java.util.UUID;
 
 @Repository
 public class InMemoryUserRepository implements UserRepository {
