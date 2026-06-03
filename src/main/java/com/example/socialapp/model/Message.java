@@ -10,9 +10,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Message {
-    String id;
-    String content;
-    String senderId;
-    String discussionId;
-    LocalDateTime sentAt;
+    private String id;
+    private String content;
+    private String senderId;
+    private String discussionId;
+    private LocalDateTime sentAt;
 }

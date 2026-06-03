@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 
 import com.example.socialapp.model.Message;
 import com.example.socialapp.repository.MessageRepository;
+import java.util.Optional;
 
 @Component
 public class InMemoryMessageRepository implements MessageRepository {
@@ -23,6 +24,18 @@ public class InMemoryMessageRepository implements MessageRepository {
         return messages.stream()
             .filter(message -> message.getDiscussionId().equals(discussionId))
             .collect(Collectors.toList());
+    }
+
+    @Override
+    public Optional<Message> findById(String id) {
+        return messages.stream()
+            .filter(m -> m.getId().equals(id))
+            .findFirst();
+    }
+
+    @Override
+    public void deleteById(String id) {
+        messages.removeIf(m -> m.getId().equals(id));
     }
 
 }
