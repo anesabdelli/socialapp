@@ -1,15 +1,17 @@
-package com.example.socialapp.repository.impl;
+package com.example.socialapp.repository.impl.inmemory;
 
 import com.example.socialapp.model.User;
 import com.example.socialapp.repository.UserRepository;
-import org.springframework.stereotype.Repository;
+import org.springframework.context.annotation.Profile;
+import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Optional;
 
-@Repository
+@Component
+@Profile("inmemory")
 public class InMemoryUserRepository implements UserRepository {
-    HashMap<String, User> users = new HashMap<>();
+    private final HashMap<String, User> users = new HashMap<>();
 
     @Override
     public Optional<User> findUserById(String id) {
@@ -18,7 +20,7 @@ public class InMemoryUserRepository implements UserRepository {
 
     @Override
     public User saveUser(User user) {
-        users.put((user.getId()), user);
+        users.put(user.getId(), user);
         return user;
     }
 }

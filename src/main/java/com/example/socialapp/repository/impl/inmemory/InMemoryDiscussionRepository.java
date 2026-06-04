@@ -1,17 +1,18 @@
-package com.example.socialapp.repository.impl;
+package com.example.socialapp.repository.impl.inmemory;
+
+import com.example.socialapp.model.Discussion;
+import com.example.socialapp.model.User;
+import com.example.socialapp.repository.DiscussionRepository;
+import org.springframework.context.annotation.Profile;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.springframework.stereotype.Component;
-
-import com.example.socialapp.model.Discussion;
-import com.example.socialapp.model.User;
-import com.example.socialapp.repository.DiscussionRepository;
-
 @Component
+@Profile("inmemory")
 public class InMemoryDiscussionRepository implements DiscussionRepository {
     private final List<Discussion> discussions = new ArrayList<>();
 
@@ -31,6 +32,13 @@ public class InMemoryDiscussionRepository implements DiscussionRepository {
     public Optional<Discussion> findByUsers(User user1, User user2) {
         return discussions.stream()
             .filter(d -> d.getUser1().getId().equals(user1.getId()) && d.getUser2().getId().equals(user2.getId()))
+            .findFirst();
+    }
+
+    @Override
+    public Optional<Discussion> findById(String id) {
+        return discussions.stream()
+            .filter(d -> d.getId().equals(id))
             .findFirst();
     }
 }

@@ -10,4 +10,5 @@ public interface DiscussionRepository {
     void save(Discussion discussion);
     List<Discussion> findByUser(User user);
     Optional<Discussion> findByUsers(User user1, User user2);
+    Optional<Discussion> findById(String id);
 }
