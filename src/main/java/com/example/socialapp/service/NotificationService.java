@@ -26,6 +26,10 @@ public class NotificationService {
         return sseEmitter;
     }
 
+    public void notify(String userId, String type, String entityId) {
+        notify(userId, type, entityId, null);
+    }
+
     public void notify(String userId, String type, String messageId, String discussionId) {
         SseEmitter sseEmitter = emitters.get(userId);
         if (sseEmitter == null) {

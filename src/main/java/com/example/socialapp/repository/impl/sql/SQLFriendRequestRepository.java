@@ -28,13 +28,16 @@ public class SQLFriendRequestRepository implements FriendRequestRepository {
         return springRepo.save(friendRequest);
     }
 
-    @Override
-    public void deleteFriendRequest(String id) {
+   @Override
+   public FriendRequest updateStatusRequest(String id, FriendRequestStatus status) {
+    FriendRequest request = springRepo.findById(id)
+            .orElseThrow(() -> new RuntimeException("FriendRequest not found: " + id));
+    request.setStatus(status);
+    return springRepo.save(request);
+  }
 
-    }
-
-    @Override
-    public FriendRequest updateStatusRequest(String id, FriendRequestStatus status) {
-        return null;
-    }
+  @Override
+  public void deleteFriendRequest(String id) {
+    springRepo.deleteById(id);
+  }
 }

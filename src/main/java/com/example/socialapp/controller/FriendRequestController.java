@@ -31,7 +31,12 @@ public class FriendRequestController {
         return ResponseEntity.ok(requests); 
     }
 
-    @PatchMapping("/{id}")
+    @PatchMapping("/{id}/accept")
+    public FriendRequest acceptFriendRequest(@PathVariable String id) {
+        return friendRequestService.acceptFriendRequest(id);
+    }
+
+    @PatchMapping("/{id}/decline")
     public FriendRequest declineFriendRequets(@PathVariable String id) {
         return friendRequestService.declineFriendRequest(id);
     }
