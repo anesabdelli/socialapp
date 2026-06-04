@@ -25,4 +25,12 @@ public class FriendRequestService {
         FriendRequest friendRequest = new FriendRequest(uuid, receivedId, senderId, FriendRequestStatus.PENDING);
         return friendRequestRepository.saveRequest(friendRequest);
     }
+
+    public FriendRequest declineFriendRequest(String id) {
+        return friendRequestRepository.updateStatusRequest(id, FriendRequestStatus.DECLINED);
+    }
+
+    public void cancelFriendRequest(String id) {
+        friendRequestRepository.deleteFriendRequest(id);
+    }
 }

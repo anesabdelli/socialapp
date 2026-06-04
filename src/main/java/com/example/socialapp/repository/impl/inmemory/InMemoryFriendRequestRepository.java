@@ -1,6 +1,7 @@
 package com.example.socialapp.repository.impl.inmemory;
 
 import com.example.socialapp.model.FriendRequest;
+import com.example.socialapp.model.FriendRequestStatus;
 import com.example.socialapp.repository.FriendRequestRepository;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
@@ -24,5 +25,18 @@ public class InMemoryFriendRequestRepository implements FriendRequestRepository 
     public FriendRequest saveRequest(FriendRequest friendRequest) {
         friendRequests.put(friendRequest.getId(), friendRequest);
         return friendRequest;
+    }
+
+    @Override
+    public void deleteFriendRequest(String id) {
+        friendRequests.remove(id);
+    }
+
+    @Override
+    public FriendRequest updateStatusRequest(String id, FriendRequestStatus status) {
+        FriendRequest request = friendRequests.get(id);
+        request.setStatus(status);
+        friendRequests.put(id, request);
+        return request;
     }
 }
