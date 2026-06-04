@@ -1,5 +1,6 @@
 package com.example.socialapp.service;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -11,6 +12,7 @@ import com.example.socialapp.model.Message;
 import com.example.socialapp.model.User;
 import com.example.socialapp.repository.MessageRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
 public class MessageService {
@@ -71,5 +73,16 @@ public class MessageService {
                     .forEach(userId -> notificationService.notify(userId, "MESSAGE_DELETED", id, discussion.getId()));
             });
         });
+    }
+    public Message sendFile(String discussionId, MultipartFile file) throws IOException, IOException {
+        Message message = new Message();
+        message.setId(UUID.randomUUID().toString());
+        message.setDiscussionId(discussionId);
+        message.setFileName(file.getOriginalFilename());
+        message.setFileData(file.getBytes());
+        message.setType("FILE");
+        message.setSentAt(LocalDateTime.now());
+        messageRepository.save(message);
+        return message;
     }
 }

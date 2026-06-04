@@ -7,6 +7,7 @@ import com.example.socialapp.dto.SendMessageRequest;
 import com.example.socialapp.model.Message;
 import com.example.socialapp.service.MessageService;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
@@ -51,5 +52,13 @@ public class MessageController {
         return ResponseEntity.noContent().build();
     }
 
+    @PostMapping("/conversations/{id}/files")
+    public ResponseEntity<?> uploadFile(
+            @PathVariable String id,
+            @RequestParam("file") MultipartFile file
+    ) {
+        Message message = messageService.sendFile(id, file);
+        return ResponseEntity.status(201).body(message);
+    }
     
 }
