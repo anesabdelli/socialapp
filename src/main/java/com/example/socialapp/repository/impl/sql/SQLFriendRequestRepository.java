@@ -1,6 +1,7 @@
 package com.example.socialapp.repository.impl.sql;
 
 import com.example.socialapp.model.FriendRequest;
+import com.example.socialapp.model.FriendRequestStatus;
 import com.example.socialapp.repository.FriendRequestRepository;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
@@ -25,5 +26,15 @@ public class SQLFriendRequestRepository implements FriendRequestRepository {
     @Override
     public FriendRequest saveRequest(FriendRequest friendRequest) {
         return springRepo.save(friendRequest);
+    }
+
+    @Override
+    public void deleteFriendRequest(String id) {
+
+    }
+
+    @Override
+    public FriendRequest updateStatusRequest(String id, FriendRequestStatus status) {
+        return null;
     }
 }

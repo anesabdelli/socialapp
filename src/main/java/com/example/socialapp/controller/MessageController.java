@@ -1,5 +1,11 @@
 package com.example.socialapp.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.StringToClassMapItem;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Encoding;
+import io.swagger.v3.oas.annotations.media.Schema;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import com.example.socialapp.dto.EditMessageRequest;
@@ -52,13 +58,24 @@ public class MessageController {
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/conversations/{id}/files")
+    @PostMapping(value = "/conversations/{id}/files", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(summary = "Upload a file")
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(
+            content = @Content(mediaType = "multipart/form-data",
+                    schema = @Schema(type = "object", properties = {
+                            @StringToClassMapItem(key = "file", value = byte[].class)
+                    })))
     public ResponseEntity<?> uploadFile(
             @PathVariable String id,
-            @RequestParam("file") MultipartFile file
+            @RequestPart("file") MultipartFile file
     ) {
         Message message = messageService.sendFile(id, file);
         return ResponseEntity.status(201).body(message);
     }
-    
+
+    @DeleteMapping("/files/{id}")
+    public ResponseEntity<Void> deleteFile(@PathVariable String id) {
+        messageService.deleteFile(id);
+        return ResponseEntity.noContent().build();
+    }
 }

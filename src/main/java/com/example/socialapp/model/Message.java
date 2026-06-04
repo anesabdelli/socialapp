@@ -26,6 +26,7 @@ public class Message {
     @JoinColumn(name = "sender_id")
     private User sender;
 
+    private String type;
     private byte[] fileData;
     private String fileName;
 
