@@ -3,6 +3,7 @@ package com.example.socialapp.controller;
 import com.example.socialapp.dto.CreateFriendRequestDto;
 import com.example.socialapp.model.FriendRequest;
 import com.example.socialapp.service.FriendRequestService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,7 +23,21 @@ public class FriendRequestController {
     }
 
     @GetMapping("/{receiverId}")
-    public List<FriendRequest> findByReceiverId(@PathVariable String receiverId) {
-        return friendRequestService.findByReceiverId(receiverId);
+    public ResponseEntity<List<FriendRequest>> findByReceiverId(@PathVariable String receiverId) {
+        List<FriendRequest> requests = friendRequestService.findByReceiverId(receiverId);
+        if (requests.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(requests); 
+    }
+
+    @PatchMapping("/{id}")
+    public FriendRequest declineFriendRequets(@PathVariable String id) {
+        return friendRequestService.declineFriendRequest(id);
+    }
+
+    @DeleteMapping("/{id}")
+    public void cancelFriendRequest(@PathVariable String id) {
+        friendRequestService.cancelFriendRequest(id);
     }
 }
