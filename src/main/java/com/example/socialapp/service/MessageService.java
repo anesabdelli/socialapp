@@ -1,5 +1,6 @@
 package com.example.socialapp.service;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -11,6 +12,7 @@ import com.example.socialapp.model.Message;
 import com.example.socialapp.model.User;
 import com.example.socialapp.repository.MessageRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
 public class MessageService {
@@ -33,13 +35,13 @@ public class MessageService {
 
         String id = UUID.randomUUID().toString();
         LocalDateTime sentAt = LocalDateTime.now();
-        Message message = new Message(id, content, sender, discussion.getId(), sentAt);
+        Message message = new Message(id, content, sender, "TEXT", (byte[]) null, null, discussion.getId(), sentAt);
         messageRepository.save(message);
         log.info("Message sent | id={} | sender={} | discussion={} | sentAt={}",
-            message.getId(),
-            message.getSender().getId(),
-            message.getDiscussionId(),
-            message.getSentAt()
+                message.getId(),
+                message.getSender().getId(),
+                message.getDiscussionId(),
+                message.getSentAt()
         );
         notificationService.notify(receiverId, "NEW_MESSAGE", message.getId(), discussion.getId());
     }
@@ -56,7 +58,7 @@ public class MessageService {
 
             discussionService.findById(message.getDiscussionId()).ifPresent(discussion -> {
                 new HashSet<>(List.of(discussion.getUser1().getId(), discussion.getUser2().getId()))
-                    .forEach(userId -> notificationService.notify(userId, "MESSAGE_EDITED", id, discussion.getId()));
+                        .forEach(userId -> notificationService.notify(userId, "MESSAGE_EDITED", id, discussion.getId()));
             });
         }
     }
@@ -65,10 +67,36 @@ public class MessageService {
         messageRepository.findById(id).ifPresent(message -> {
             messageRepository.deleteById(id);
 
-            // collection sans doublons
             discussionService.findById(message.getDiscussionId()).ifPresent(discussion -> {
                 new HashSet<>(List.of(discussion.getUser1().getId(), discussion.getUser2().getId()))
-                    .forEach(userId -> notificationService.notify(userId, "MESSAGE_DELETED", id, discussion.getId()));
+                        .forEach(userId -> notificationService.notify(userId, "MESSAGE_DELETED", id, discussion.getId()));
+            });
+        });
+    }
+
+    public Message sendFile(String discussionId, MultipartFile file) {
+        try {
+            String id = UUID.randomUUID().toString();
+            byte[] fileData = file.getBytes();
+            String fileName = file.getOriginalFilename();
+            Message message = new Message(id, null, (User) null, "FILE", fileData, fileName, discussionId, LocalDateTime.now());
+            messageRepository.save(message);
+            return message;
+        } catch (IOException e) {
+            throw new RuntimeException("Erreur lors de la lecture du fichier", e);
+        }
+    }
+
+    public void deleteFile(String id) {
+        messageRepository.findById(id).ifPresent(message -> {
+            if (!"FILE".equals(message.getType())) {
+                throw new RuntimeException("Ce message n'est pas un fichier");
+            }
+            messageRepository.deleteById(id);
+
+            discussionService.findById(message.getDiscussionId()).ifPresent(discussion -> {
+                new HashSet<>(List.of(discussion.getUser1().getId(), discussion.getUser2().getId()))
+                        .forEach(userId -> notificationService.notify(userId, "FILE_DELETED", id, discussion.getId()));
             });
         });
     }
