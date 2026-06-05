@@ -3,7 +3,6 @@ package com.example.socialapp.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.StringToClassMapItem;
 import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Encoding;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -13,9 +12,9 @@ import com.example.socialapp.dto.SendMessageRequest;
 import com.example.socialapp.model.Message;
 import com.example.socialapp.service.MessageService;
 
-import java.io.IOException;
 import java.util.List;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -67,10 +66,22 @@ public class MessageController {
                     })))
     public ResponseEntity<?> uploadFile(
             @PathVariable String id,
+            @RequestParam String senderId,
             @RequestPart("file") MultipartFile file
     ) {
-        Message message = messageService.sendFile(id, file);
+        Message message = messageService.sendFile(id, senderId, file);
         return ResponseEntity.status(201).body(message);
+    }
+
+    @GetMapping("/files/{id}/download")
+    public ResponseEntity<byte[]> downloadFile(@PathVariable String id) {
+        return messageService.findById(id)
+                .filter(m -> "FILE".equals(m.getType()))
+                .map(m -> ResponseEntity.ok()
+                        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + m.getFileName() + "\"")
+                        .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_OCTET_STREAM_VALUE)
+                        .body(m.getFileData()))
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/files/{id}")

@@ -12,11 +12,12 @@ import java.util.UUID;
 public class FriendRequestService {
     private final FriendRequestRepository friendRequestRepository;
     private final NotificationService notificationService;
+    private final DiscussionService discussionService;
 
-
-    public FriendRequestService(FriendRequestRepository friendRequestRepository, NotificationService notificationService) {
+    public FriendRequestService(FriendRequestRepository friendRequestRepository, NotificationService notificationService, DiscussionService discussionService) {
         this.friendRequestRepository = friendRequestRepository;
         this.notificationService = notificationService;
+        this.discussionService = discussionService;
     }
 
     public List<FriendRequest> findByReceiverId(String receiverId) {
@@ -26,12 +27,13 @@ public class FriendRequestService {
     public FriendRequest createFriendRequest(String senderId, String receivedId) {
         String uuid = UUID.randomUUID().toString();
         FriendRequest friendRequest = new FriendRequest(uuid, receivedId, senderId, FriendRequestStatus.PENDING);
-        notificationService.notify(receivedId, "FRIEND_REQUEST_RECEIVED", uuid);
+        notificationService.notify(friendRequest.getReceiverId(), "FRIEND_REQUEST_RECEIVED", uuid);
         return friendRequestRepository.saveRequest(friendRequest);
     }
 
     public FriendRequest acceptFriendRequest(String id) {
         FriendRequest updated = friendRequestRepository.updateStatusRequest(id, FriendRequestStatus.ACCEPTED);
+        discussionService.getOrCreateDiscussion(updated.getSenderId(), updated.getReceiverId());
         notificationService.notify(updated.getSenderId(), "FRIEND_REQUEST_ACCEPTED", id);
         return updated;
     }

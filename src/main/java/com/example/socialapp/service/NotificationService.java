@@ -23,6 +23,11 @@ public class NotificationService {
         sseEmitter.onCompletion(() -> emitters.remove(userId));
         sseEmitter.onTimeout(() -> emitters.remove(userId));
         log.info("User {} connected to notifications", userId);
+        try {
+            sseEmitter.send(SseEmitter.event().name("CONNECTED").data("connected"));
+        } catch (IOException e) {
+            emitters.remove(userId);
+        }
         return sseEmitter;
     }
 

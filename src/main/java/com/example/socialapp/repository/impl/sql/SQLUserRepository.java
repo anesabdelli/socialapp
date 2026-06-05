@@ -23,6 +23,11 @@ public class SQLUserRepository implements UserRepository {
     }
 
     @Override
+    public Optional<User> findUserByUsername(String username) {
+        return springRepo.findByUsername(username);
+    }
+
+    @Override
     public User saveUser(User user) {
         return springRepo.save(user);
     }

@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SocialApp</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: system-ui, sans-serif; height: 100vh; display: flex; flex-direction: column; background: #f0f2f5; }
+
+        .header { background: #1a1a2e; color: white; padding: 12px 20px; display: flex; align-items: center; gap: 10px; }
+        .header h1 { font-size: 17px; flex: 1; }
+        .header input { padding: 6px 10px; border-radius: 6px; border: none; font-size: 13px; width: 150px; }
+        .header button { padding: 6px 12px; background: #4ade80; color: #1a1a2e; border: none; border-radius: 6px; cursor: pointer; font-weight: 700; font-size: 13px; }
+        .header .user-badge { font-size: 13px; color: white; font-weight: 700; }
+        .header .switch-btn { font-size: 12px; color: #a0aec0; cursor: pointer; text-decoration: underline; }
+        .header .switch-btn:hover { color: white; }
+        #loginArea { display: flex; align-items: center; gap: 8px; }
+        #loggedInArea { display: none; align-items: center; gap: 10px; }
+
+        .notif-bar { background: #16213e; color: #a0aec0; padding: 12px 20px; font-size: 14px; min-height: 44px; border-bottom: 1px solid #2d3748; display: flex; align-items: center; }
+        .notif-bar .notif-tag { color: #4ade80; font-weight: 700; }
+
+        .main { display: flex; flex: 1; overflow: hidden; }
+
+        /* Left sidebar */
+        .left { width: 280px; background: white; border-right: 1px solid #e2e8f0; display: flex; flex-direction: column; }
+        .tabs { display: flex; border-bottom: 1px solid #e2e8f0; }
+        .tab { flex: 1; padding: 10px 6px; text-align: center; cursor: pointer; font-size: 12px; font-weight: 700; color: #718096; border-bottom: 2px solid transparent; transition: all .15s; }
+        .tab:hover { color: #4a5568; }
+        .tab.active { color: #667eea; border-bottom-color: #667eea; }
+        .section { flex: 1; overflow-y: auto; padding: 12px; display: none; }
+        .section.active { display: block; }
+
+        /* Forms */
+        .form { background: #f7fafc; border-radius: 8px; padding: 10px; margin-bottom: 12px; border: 1px solid #e2e8f0; }
+        .form input { width: 100%; padding: 7px 9px; border: 1px solid #e2e8f0; border-radius: 6px; margin-bottom: 7px; font-size: 13px; }
+        .form input:last-of-type { margin-bottom: 0; }
+        .form button { width: 100%; margin-top: 7px; padding: 8px; background: #667eea; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 700; font-size: 13px; }
+        .form button:hover { background: #5a67d8; }
+
+        /* List items */
+        .item { padding: 10px 11px; border-radius: 8px; cursor: pointer; border: 1px solid #e2e8f0; margin-bottom: 6px; transition: background .1s; }
+        .item:hover { background: #f7fafc; }
+        .item.active { background: #ebf4ff; border-color: #667eea; }
+        .item-title { font-weight: 700; font-size: 13px; color: #2d3748; }
+        .item-sub { font-size: 11px; color: #a0aec0; margin-top: 2px; font-family: monospace; }
+        .item-actions { display: flex; gap: 5px; margin-top: 7px; }
+
+        /* Right panel */
+        .right { flex: 1; display: flex; flex-direction: column; background: #f7f9fc; }
+        .chat-header { padding: 14px 20px; background: white; border-bottom: 1px solid #e2e8f0; font-weight: 700; font-size: 15px; color: #2d3748; }
+        .messages { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 8px; }
+        .msg { max-width: 65%; padding: 9px 13px; border-radius: 14px; font-size: 13px; }
+        .msg.mine { align-self: flex-end; background: #667eea; color: white; border-bottom-right-radius: 4px; }
+        .msg.other { align-self: flex-start; background: white; border: 1px solid #e2e8f0; border-bottom-left-radius: 4px; }
+        .msg-sender { font-size: 10px; opacity: .65; margin-bottom: 3px; font-weight: 700; }
+        .msg-actions { font-size: 11px; margin-top: 5px; display: flex; gap: 10px; }
+        .msg-actions a { cursor: pointer; opacity: .6; text-decoration: underline; }
+        .msg-actions a:hover { opacity: 1; }
+        .input-area { padding: 12px 16px; background: white; border-top: 1px solid #e2e8f0; display: flex; gap: 8px; align-items: center; }
+        .input-area input[type=text] { flex: 1; padding: 9px 14px; border: 1px solid #e2e8f0; border-radius: 20px; font-size: 13px; outline: none; }
+        .input-area input[type=text]:focus { border-color: #667eea; }
+        .input-area button { padding: 9px 18px; background: #667eea; color: white; border: none; border-radius: 20px; cursor: pointer; font-weight: 700; font-size: 13px; }
+        .input-area button:hover { background: #5a67d8; }
+        .btn-icon { padding: 9px 12px; background: #f0f2f5; border: 1px solid #e2e8f0; border-radius: 20px; cursor: pointer; font-size: 14px; }
+        .btn-icon:hover { background: #e2e8f0; }
+
+        /* Buttons */
+        .btn { padding: 4px 9px; border: none; border-radius: 5px; cursor: pointer; font-size: 11px; font-weight: 700; }
+        .btn-green { background: #4ade80; color: #1a1a2e; }
+        .btn-red { background: #fc8181; color: white; }
+
+        .empty { text-align: center; color: #c0ccda; padding: 30px 16px; font-size: 13px; }
+        .id-copy { font-size: 10px; font-family: monospace; background: #edf2f7; padding: 2px 5px; border-radius: 3px; cursor: pointer; color: #4a5568; }
+        .id-copy:hover { background: #e2e8f0; }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>SocialApp</h1>
+    <div id="loginArea">
+        <input type="text" id="usernameInput" placeholder="Enter username..." onkeydown="if(event.key==='Enter') joinAs()">
+        <button onclick="joinAs()">Join</button>
+    </div>
+    <div id="loggedInArea">
+        <span class="user-badge" id="currentUserDisplay"></span>
+        <span class="switch-btn" onclick="switchUser()">switch account</span>
+    </div>
+</div>
+
+<div class="notif-bar" id="notifBar">Notifications will appear here once a user is created.</div>
+
+<div class="main">
+    <div class="left">
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('friends')">Friends</div>
+            <div class="tab" onclick="switchTab('discussions')">Chats</div>
+            <div class="tab" onclick="switchTab('groups')">Groups</div>
+        </div>
+
+        <div class="section active" id="tab-friends">
+            <div class="form">
+                <input type="text" id="friendTargetUsername" placeholder="Username to add...">
+                <button onclick="sendFriendRequest()">Send Friend Request</button>
+            </div>
+            <div id="friendRequestsList"><div class="empty">No pending requests</div></div>
+        </div>
+
+        <div class="section" id="tab-discussions">
+            <div id="discussionsList"><div class="empty">No discussions yet</div></div>
+        </div>
+
+        <div class="section" id="tab-groups">
+            <div class="form">
+                <input type="text" id="groupName" placeholder="Group name...">
+                <div style="font-size:11px; color:#718096; margin:4px 0 4px;">Select friends to add:</div>
+                <div id="friendsChecklist" style="max-height:130px; overflow-y:auto; border:1px solid #e2e8f0; border-radius:6px; padding:6px; background:white; margin-bottom:0;">
+                    <div style="font-size:12px; color:#a0aec0;">No friends yet</div>
+                </div>
+                <button onclick="createGroup()">Create Group</button>
+            </div>
+            <div id="groupsList"><div class="empty">No groups yet</div></div>
+        </div>
+    </div>
+
+    <div class="right">
+        <div class="chat-header" id="chatHeader">Select a conversation</div>
+        <div class="messages" id="messagesList"><div class="empty">Select a conversation to start chatting</div></div>
+        <div class="input-area">
+            <input type="file" id="fileInput" style="display:none" onchange="uploadFile()">
+            <button class="btn-icon" title="Send file" onclick="document.getElementById('fileInput').click()">📎</button>
+            <input type="text" id="messageInput" placeholder="Type a message..." onkeydown="if(event.key==='Enter') sendMessage()">
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const API = '';
+    let currentUser = null;
+    let activeDiscussion = null;
+    let activeType = null;
+    let sseSource = null;
+    let discussionsCache = [];
+
+    // ─── User ─────────────────────────────────────────────────────────────────
+    async function joinAs() {
+        const username = document.getElementById('usernameInput').value.trim();
+        if (!username) return;
+        const findRes = await fetch(`${API}/users/username/${encodeURIComponent(username)}`);
+        let user;
+        if (findRes.ok) {
+            user = await findRes.json();
+            showNotif(`👋 Welcome back, ${user.username}!`);
+        } else {
+            const createRes = await fetch(`${API}/users`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain' },
+                body: username
+            });
+            user = await createRes.json();
+            showNotif(`🎉 Account created: ${user.username}`);
+        }
+        document.getElementById('usernameInput').value = '';
+        setCurrentUser(user);
+    }
+
+    function setCurrentUser(user) {
+        currentUser = user;
+        document.getElementById('currentUserDisplay').textContent = `Logged in as ${user.username}`;
+        document.getElementById('loginArea').style.display = 'none';
+        document.getElementById('loggedInArea').style.display = 'flex';
+        connectSSE();
+        refresh();
+    }
+
+    function switchUser() {
+        if (sseSource) sseSource.close();
+        currentUser = null;
+        activeDiscussion = null;
+        activeType = null;
+        discussionsCache = [];
+        document.getElementById('loginArea').style.display = 'flex';
+        document.getElementById('loggedInArea').style.display = 'none';
+        document.getElementById('chatHeader').textContent = 'Select a conversation';
+        document.getElementById('messagesList').innerHTML = '<div class="empty">Select a conversation to start chatting</div>';
+        document.getElementById('friendRequestsList').innerHTML = '<div class="empty">No pending requests</div>';
+        document.getElementById('discussionsList').innerHTML = '<div class="empty">No discussions yet</div>';
+        document.getElementById('groupsList').innerHTML = '<div class="empty">No groups yet</div>';
+    }
+
+    // ─── SSE ──────────────────────────────────────────────────────────────────
+    function connectSSE() {
+        if (sseSource) sseSource.close();
+        sseSource = new EventSource(`${API}/notifications/${currentUser.id}`);
+
+        sseSource.onerror = () => showNotif('⚠️ Notification connection lost — try switching accounts');
+        sseSource.addEventListener('CONNECTED', () => showNotif('🟢 Connected to notifications'));
+
+        sseSource.addEventListener('FRIEND_REQUEST_RECEIVED', () => {
+            showNotif(`🔔 New friend request received!`);
+            loadFriendRequests();
+        });
+
+        sseSource.addEventListener('FRIEND_REQUEST_ACCEPTED', () => {
+            showNotif(`✅ Friend request accepted!`);
+            loadDiscussions();
+        });
+
+        // For message events: only reload messages if notification is for the active discussion
+        ['NEW_MESSAGE', 'NEW_FILE'].forEach(type => {
+            sseSource.addEventListener(type, e => {
+                const data = JSON.parse(e.data);
+                showNotif(`🔔 ${type === 'NEW_MESSAGE' ? 'New message' : 'New file'} received`);
+                loadDiscussions();
+                if (activeDiscussion && data.discussionId === activeDiscussion) loadMessages();
+            });
+        });
+
+        ['MESSAGE_EDITED', 'MESSAGE_DELETED', 'FILE_DELETED'].forEach(type => {
+            sseSource.addEventListener(type, e => {
+                const data = JSON.parse(e.data);
+                showNotif(`🔔 ${type.replace('_', ' ').toLowerCase()}`);
+                if (activeDiscussion && data.discussionId === activeDiscussion) loadMessages();
+            });
+        });
+    }
+
+    function showNotif(msg) {
+        document.getElementById('notifBar').innerHTML =
+            `<span class="notif-tag">[${new Date().toLocaleTimeString()}]</span> ${msg}`;
+    }
+
+    // ─── Tabs ─────────────────────────────────────────────────────────────────
+    function switchTab(tab) {
+        document.querySelectorAll('.tab').forEach((t, i) =>
+            t.classList.toggle('active', ['friends', 'discussions', 'groups'][i] === tab));
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        document.getElementById(`tab-${tab}`).classList.add('active');
+        if (!currentUser) return;
+        if (tab === 'friends') loadFriendRequests();
+        if (tab === 'discussions') loadDiscussions();
+        if (tab === 'groups') { loadGroups(); loadFriendsChecklist(); }
+    }
+
+    function refresh() {
+        loadFriendRequests();
+        loadDiscussions();
+        loadGroups();
+        loadFriendsChecklist();
+    }
+
+    // ─── Friend Requests ──────────────────────────────────────────────────────
+    async function sendFriendRequest() {
+        if (!currentUser) return alert('Log in first');
+        const username = document.getElementById('friendTargetUsername').value.trim();
+        if (!username) return;
+        const res = await fetch(`${API}/users/username/${encodeURIComponent(username)}`);
+        if (!res.ok) { showNotif(`❌ User "${username}" not found`); return; }
+        const target = await res.json();
+        if (target.id === currentUser.id) { showNotif(`❌ You can't add yourself`); return; }
+        const alreadyFriend = discussionsCache.some(d => d.user1.id === target.id || d.user2.id === target.id);
+        if (alreadyFriend) { showNotif(`❌ ${username} is already your friend`); return; }
+        await fetch(`${API}/friend-requests`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ senderId: currentUser.id, receiverId: target.id })
+        });
+        document.getElementById('friendTargetUsername').value = '';
+        showNotif(`📤 Friend request sent to ${username}`);
+    }
+
+    async function loadFriendRequests() {
+        if (!currentUser) return;
+        const res = await fetch(`${API}/friend-requests/${currentUser.id}`);
+        const container = document.getElementById('friendRequestsList');
+        if (!res.ok) { container.innerHTML = '<div class="empty">No pending requests</div>'; return; }
+        const requests = await res.json();
+        const pending = requests.filter(r => r.status === 'PENDING');
+        if (!pending.length) { container.innerHTML = '<div class="empty">No pending requests</div>'; return; }
+
+        // Fetch sender usernames in parallel
+        const senders = await Promise.all(
+            pending.map(r => fetch(`${API}/users/${r.senderId}`)
+                .then(res => res.ok ? res.json() : { username: r.senderId }))
+        );
+
+        container.innerHTML = pending.map((r, i) => `
+            <div class="item">
+                <div class="item-title">From <strong>${senders[i].username}</strong></div>
+                <div class="item-actions">
+                    <button class="btn btn-green" onclick="acceptRequest('${r.id}')">Accept</button>
+                    <button class="btn btn-red" onclick="declineRequest('${r.id}')">Decline</button>
+                </div>
+            </div>`).join('');
+    }
+
+    async function acceptRequest(id) {
+        await fetch(`${API}/friend-requests/${id}/accept`, { method: 'PATCH' });
+        await loadFriendRequests();
+        await loadDiscussions();
+    }
+
+    async function declineRequest(id) {
+        await fetch(`${API}/friend-requests/${id}/decline`, { method: 'PATCH' });
+        await loadFriendRequests();
+    }
+
+    // ─── Discussions ──────────────────────────────────────────────────────────
+    async function loadDiscussions() {
+        if (!currentUser) return;
+        const res = await fetch(`${API}/discussions/${currentUser.id}`);
+        const container = document.getElementById('discussionsList');
+        if (!res.ok) { container.innerHTML = '<div class="empty">No discussions yet</div>'; return; }
+        const discussions = await res.json();
+        discussionsCache = discussions;
+        if (!discussions.length) { container.innerHTML = '<div class="empty">No discussions yet</div>'; return; }
+        container.innerHTML = discussions.map(d => {
+            const other = d.user1.id === currentUser.id ? d.user2 : d.user1;
+            return `<div class="item ${activeDiscussion === d.id ? 'active' : ''}"
+                onclick="openDiscussion('${d.id}', 'direct', '${other.username}')">
+                <div class="item-title">💬 ${other.username}</div>
+            </div>`;
+        }).join('');
+    }
+
+    // ─── Groups ───────────────────────────────────────────────────────────────
+    async function loadFriendsChecklist() {
+        if (!currentUser) return;
+        const res = await fetch(`${API}/discussions/${currentUser.id}`);
+        const container = document.getElementById('friendsChecklist');
+        if (!res.ok || !(await res.clone().json()).length) {
+            container.innerHTML = '<div style="font-size:12px; color:#a0aec0;">No friends yet</div>';
+            return;
+        }
+        const discussions = await res.json();
+        container.innerHTML = discussions.map(d => {
+            const other = d.user1.id === currentUser.id ? d.user2 : d.user1;
+            return `<label style="display:flex; align-items:center; gap:7px; padding:4px 2px; cursor:pointer; font-size:13px;">
+                <input type="checkbox" value="${other.id}"> ${other.username}
+            </label>`;
+        }).join('');
+    }
+
+    async function createGroup() {
+        if (!currentUser) return alert('Log in first');
+        const name = document.getElementById('groupName').value.trim();
+        if (!name) return;
+        const checked = [...document.querySelectorAll('#friendsChecklist input:checked')];
+        if (!checked.length) { showNotif('❌ Select at least one friend'); return; }
+        const memberIds = [currentUser.id, ...checked.map(cb => cb.value)];
+        await fetch(`${API}/group-discussions`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, memberIds })
+        });
+        document.getElementById('groupName').value = '';
+        document.querySelectorAll('#friendsChecklist input').forEach(cb => cb.checked = false);
+        await loadGroups();
+        showNotif(`👥 Group "${name}" created`);
+    }
+
+    async function loadGroups() {
+        if (!currentUser) return;
+        const res = await fetch(`${API}/group-discussions/${currentUser.id}`);
+        const container = document.getElementById('groupsList');
+        if (!res.ok) { container.innerHTML = '<div class="empty">No groups yet</div>'; return; }
+        const groups = await res.json();
+        if (!groups.length) { container.innerHTML = '<div class="empty">No groups yet</div>'; return; }
+        container.innerHTML = groups.map(g => `
+            <div class="item ${activeDiscussion === g.id ? 'active' : ''}"
+                onclick="openDiscussion('${g.id}', 'group', '${g.name}')">
+                <div class="item-title">👥 ${g.name}</div>
+                <div class="item-sub">${g.members.length} members</div>
+            </div>`).join('');
+    }
+
+    // ─── Messages ─────────────────────────────────────────────────────────────
+    async function openDiscussion(id, type, name) {
+        activeDiscussion = id;
+        activeType = type;
+        document.getElementById('chatHeader').textContent = (type === 'group' ? '👥 ' : '💬 ') + name;
+        await loadMessages();
+    }
+
+    async function loadMessages() {
+        if (!activeDiscussion) return;
+        const res = await fetch(`${API}/messages/${activeDiscussion}`);
+        const container = document.getElementById('messagesList');
+        if (!res.ok) { container.innerHTML = '<div class="empty">No messages</div>'; return; }
+        const messages = await res.json();
+        if (!messages.length) { container.innerHTML = '<div class="empty">No messages yet — say hello!</div>'; return; }
+        container.innerHTML = messages.map(m => {
+            const mine = m.sender && m.sender.id === currentUser?.id;
+            if (m.type === 'FILE') {
+                return `<div class="msg ${mine ? 'mine' : 'other'}">
+                    ${!mine && m.sender ? `<div class="msg-sender">${m.sender.username}</div>` : ''}
+                    <div>📎 <a href="/messages/files/${m.id}/download" download="${m.fileName || 'file'}" style="color:inherit; text-decoration:underline;">${m.fileName || 'file'}</a></div>
+                    ${mine ? `<div class="msg-actions"><a onclick="deleteFile('${m.id}')">delete</a></div>` : ''}
+                </div>`;
+            }
+            return `<div class="msg ${mine ? 'mine' : 'other'}">
+                ${!mine && m.sender ? `<div class="msg-sender">${m.sender.username}</div>` : ''}
+                <div>${m.content || ''}</div>
+                ${mine ? `<div class="msg-actions">
+                    <a onclick="editMsg('${m.id}')">edit</a>
+                    <a onclick="deleteMessage('${m.id}')">delete</a>
+                </div>` : ''}
+            </div>`;
+        }).join('');
+        container.scrollTop = container.scrollHeight;
+    }
+
+    async function sendMessage() {
+        if (!currentUser || !activeDiscussion) return;
+        const input = document.getElementById('messageInput');
+        const content = input.value.trim();
+        if (!content) return;
+        input.value = '';
+        if (activeType === 'group') {
+            await fetch(`${API}/group-discussions/${activeDiscussion}/messages`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ senderId: currentUser.id, content })
+            });
+        } else {
+            const d = discussionsCache.find(d => d.id === activeDiscussion);
+            if (!d) { showNotif('❌ Discussion not found, please refresh'); return; }
+            const receiverId = d.user1.id === currentUser.id ? d.user2.id : d.user1.id;
+            await fetch(`${API}/messages`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ senderId: currentUser.id, receiverId, content })
+            });
+        }
+        await loadMessages();
+    }
+
+    async function editMsg(id) {
+        const newContent = prompt('Edit message:');
+        if (!newContent) return;
+        await fetch(`${API}/messages/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ content: newContent })
+        });
+        await loadMessages();
+    }
+
+    async function deleteMessage(id) {
+        if (!confirm('Delete this message?')) return;
+        await fetch(`${API}/messages/${id}`, { method: 'DELETE' });
+        await loadMessages();
+    }
+
+    async function uploadFile() {
+        if (!currentUser || !activeDiscussion) return;
+        const file = document.getElementById('fileInput').files[0];
+        if (!file) return;
+        const formData = new FormData();
+        formData.append('file', file);
+        await fetch(`${API}/messages/conversations/${activeDiscussion}/files?senderId=${currentUser.id}`, {
+            method: 'POST',
+            body: formData
+        });
+        document.getElementById('fileInput').value = '';
+        await loadMessages();
+        showNotif(`📎 File "${file.name}" sent`);
+    }
+
+    async function deleteFile(id) {
+        if (!confirm('Delete this file?')) return;
+        await fetch(`${API}/messages/files/${id}`, { method: 'DELETE' });
+        await loadMessages();
+    }
+</script>
+</body>
+</html>

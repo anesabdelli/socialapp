@@ -22,7 +22,8 @@ public class DiscussionService {
         User user1 = userService.getUserById(user1Id).orElseThrow(() -> new RuntimeException("User not found: " + user1Id));
         User user2 = userService.getUserById(user2Id).orElseThrow(() -> new RuntimeException("User not found: " + user2Id));
 
-        Optional<Discussion> existing = discussionRepository.findByUsers(user1, user2);
+        Optional<Discussion> existing = discussionRepository.findByUsers(user1, user2)
+                .or(() -> discussionRepository.findByUsers(user2, user1));
 
         if (existing.isPresent()) {
             return existing.get();
