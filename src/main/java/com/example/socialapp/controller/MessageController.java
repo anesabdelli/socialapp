@@ -3,7 +3,6 @@ package com.example.socialapp.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.StringToClassMapItem;
 import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Encoding;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -13,7 +12,6 @@ import com.example.socialapp.dto.SendMessageRequest;
 import com.example.socialapp.model.Message;
 import com.example.socialapp.service.MessageService;
 
-import java.io.IOException;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
@@ -67,9 +65,10 @@ public class MessageController {
                     })))
     public ResponseEntity<?> uploadFile(
             @PathVariable String id,
+            @RequestParam String senderId,
             @RequestPart("file") MultipartFile file
     ) {
-        Message message = messageService.sendFile(id, file);
+        Message message = messageService.sendFile(id, senderId, file);
         return ResponseEntity.status(201).body(message);
     }
 
